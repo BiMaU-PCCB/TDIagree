@@ -4,54 +4,172 @@
 \alias{plot.tdi}
 \title{Bland-Altman plot}
 \usage{
-\method{plot}{tdi}(x, main = NULL, xlim = NULL, ylim = NULL, ...)
+\method{plot}{tdi}(
+  x,
+  tdi = FALSE,
+  ub = FALSE,
+  loa = FALSE,
+  method = NULL,
+  ub.pc = NULL,
+  p = NULL,
+  loess = FALSE,
+  method.col = NULL,
+  loa.col = "#c27d38",
+  loess.col = "#cd2c35",
+  loess.span = 2/3,
+  legend = FALSE,
+  inset = c(-0.24, 0),
+  main = "Bland-Altman plot",
+  xlab = "Mean",
+  ylab = "Difference",
+  xlim = NULL,
+  ylim = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{input object of class \code{tdi} resulting from a call of the function \code{\link[TDIagree]{TDI}}.}
 
-\item{main}{overall title for the plot (to be passed to \code{main} argument in \code{\link[base]{plot}}).}
+\item{tdi}{logical indicating whether the \eqn{\pm}TDI estimate(s) should be added to the plot as solid lines. \cr
+The default value is \code{FALSE}.}
 
-\item{xlim}{the \eqn{x} limits of the plot (to be passed to \code{xlim} argument in \code{\link[base]{plot}}). \cr
-The default value, NULL, indicates that the range of the mean values should be used.}
+\item{ub}{logical indicating whether the \eqn{\pm}UB estimate(s) should be added to the plot as dashed lines. \cr
+The default value is \code{FALSE}.}
 
-\item{ylim}{the \eqn{y} limits of the plot (to be passed to \code{ylim} argument in \code{\link[base]{plot}}). \cr
-The default value, NULL, indicates that the range of the differences values should be used.}
+\item{loa}{logical indicating whether the LoA should be added to the plot as dotted lines. \cr
+The default value is \code{FALSE}.}
+
+\item{method}{name of the method(s) for which the TDI or the UB estimates will be added to the plot. If both \code{tdi} and \code{ub}
+are set to \code{FALSE}, this argument is ignored. This argument is not case-sensitive and is passed to \code{\link[base]{match.arg}}. \cr
+The default value, \code{NULL}, indicates that, for the measures specified, all the methods for which the TDI (and/or UB) has been
+computed in the call of the function \code{\link[TDIagree]{TDI}} are to be added to the plot.}
+
+\item{ub.pc}{name of the technique for the estimated UB to be added from the method of Perez-Jaume and Carrasco (2015). Possible values are: \code{p_db}, \code{n_db}, \code{e_db}, \code{b_db},
+\code{p_cb}, \code{n_cb}, \code{e_cb} and \code{b_cb}. The bootstrap approach (differences or cluster) is indicated with "db" and "cb" and the
+strategy (based on percentiles, the normal distribution, the empirical method or the BC\eqn{_a}) is indicated with "p", "n", "e" and "b". \cr
+The default value, \code{NULL}, indicates that the first estimated UB is to be added to the plot.}
+
+\item{p}{value of the proportion for which the TDI and/or UB (depending on the value of the arguments \code{tdi} and \code{ub})
+are to be added to the plot. If both \code{tdi} and \code{ub} are set to \code{FALSE}, this argument is ignored. \cr
+The default value, \code{NULL}, indicates that only the first proportion passed to the call of the function \code{\link[TDIagree]{TDI}}
+is to be considered.}
+
+\item{loess}{logical indicating whether a smooth curve computed by \code{\link[stats]{loess.smooth}} should be added to the plot as a dotdashed curve. \cr
+The default value is \code{FALSE}.}
+
+\item{method.col}{colour palette to be used in the drawing of TDIs and/or UBs. A colour should be indicated for every method asked. It is assumed that the colours
+are passed in the same order as the methods passed to \code{method}. If both \code{tdi} and \code{ub} are set to \code{FALSE},
+this argument is ignored. \cr
+The default value, \code{NULL}, indicates that the following palette should be used:
+\code{"#f3df6c"}, \code{"#9c964a"}, \code{"#f4b5bd"} and \code{"#85d4e3"} corresponding to the options
+\code{"Choudhary P"}, \code{"Escaramis et al."}, \code{"Choudhary NP"} and \code{"Perez-Jaume and Carrasco"} of \code{method}, respectively.}
+
+\item{loa.col}{colour to be used in the drawing of the LoA. If \code{loa} is set to \code{FALSE}, this argument is ignored. \cr
+The default value is \code{"#c27d38"}.}
+
+\item{loess.col}{colour to be used in the drawing of the loess smooth curve. If \code{loess} is set to \code{FALSE}, this argument is ignored. \cr
+The default value is \code{"#cd2c35"}.}
+
+\item{loess.span}{smoothness parameter for \code{\link[stats]{loess.smooth}}. \cr
+The default value is 2/3.}
+
+\item{legend}{logical indicating whether a legend should be added outside the plot. If all \code{tdi}, \code{ub} and \code{loa}
+are set to \code{FALSE}, this argument is ignored. \cr
+The default value is \code{FALSE}.}
+
+\item{inset}{specifies how far the legend is inset from the plot margins (to be passed to \code{inset} argument in \code{\link[graphics]{legend}}). \cr
+The default value is \code{c(-0.25, 0)}, recommended for 24'' screens with default plot window. For 13'' screens, \code{c(-0.34, 0)} is recommended.}
+
+\item{main}{overall title for the plot (to be passed to \code{main} argument in \code{\link[base]{plot}}). \cr
+The default value is \code{"Bland-Altman plot"}.}
+
+\item{xlab}{a label for the x-axis (to be passed to \code{xlab} argument in \code{\link[base]{plot}}). \cr
+The default value is \code{"Mean"}.}
+
+\item{ylab}{a label for the y-axis (to be passed to \code{ylab} argument in \code{\link[base]{plot}}). \cr
+The default value is \code{"Difference"}.}
+
+\item{xlim}{the x limits of the plot (to be passed to \code{xlim} argument in \code{\link[base]{plot}}). \cr
+The default value, \code{NULL}, indicates that the range of the mean values should be used.}
+
+\item{ylim}{the y limits of the plot (to be passed to \code{ylim} argument in \code{\link[base]{plot}}). \cr
+The default value, \code{NULL}, indicates that the range of the differences values should be used.}
 
 \item{...}{other graphical parameters (to be passed to \code{\link[base]{plot}}).}
 }
 \value{
-A Bland-Altman plot of the data in \code{x}.
+A Bland-Altman plot of the data in \code{x} with a solid black line at differences \eqn{=} 0, with differences
+considered as first level \eqn{-} second level of the variable \code{met} in the call of the function \code{\link[TDIagree]{TDI}}.
 }
 \description{
-This function creates a Bland-Altman plot, which is used to evaluate the agreement among the quantitative measures taken by two raters.
-The plot displays the mean of the measurements from both raters in the x-axis and the differences between the measures taken by the two raters in the y-axis.
+This function creates a Bland-Altman plot from Altman and Bland (1983), which is used to evaluate the agreement among the quantitative measures taken by two raters.
+The plot displays the mean of the measurements from both raters in the x-axis and the differences between the measures taken by the two raters
+in the y-axis. It can also display the TDI and UB estimates from the call of the function \code{\link[TDIagree]{TDI}} as well as the limits of
+agreement (LoA) from Bland and Altman (1986).
+}
+\details{
+The LoA are computed using the formula \eqn{\bar{d}\pm z_{1-\frac{\alpha}{2}}\cdot \text{sd}(d)}, where \eqn{z_{1-\frac{\alpha}{2}}} is the \eqn{(1-\frac{\alpha}{2})}-th
+quantile of the standard normal distribution, \eqn{d} is the vector containing the differences between the two raters and \eqn{\bar{d}} represents their mean.
 }
 \section{Note}{
 
-Future versions of the package will include the TDI and UB estimates in the plot.
+A call to \code{\link[graphics]{par}} is used in this method. Notice that the arguments
+\code{font.lab} and \code{las} are always set to 2 and 1 respectively. Moreover,
+if \code{legend} is \code{TRUE}, \code{mar} is set to \code{c(4, 4, 2, 9)}.
 }
 
 \examples{
+# normal data
+
 set.seed(2025)
 
 n <- 100
-y_A1 <- rnorm(n, 50, 10) # rater A, replicate 1
-y_A2 <- rnorm(n, 50, 10) # rater A, replicate 2
-y_B1 <- rnorm(n, 30, 15) # rater B, replicate 1
-y_B2 <- rnorm(n, 30, 15) # rater B, replicate 2
 
-ex_data <- data.frame(y = c(y_A1, y_A2, y_B1, y_B2), rater = factor(rep(c("A", "B"), each = 2*n)),
-                      replicate = factor(rep(rep(1:2, each = n), 2)), subj = factor(rep(1:n, 4)))
+mu.ind <- rnorm(n, 0, 7)
+
+epsA1 <- rnorm(n, 0, 3)
+epsA2 <- rnorm(n, 0, 3)
+epsB1 <- rnorm(n, 0, 3)
+epsB2 <- rnorm(n, 0, 3)
+
+y_A1 <- 50 + mu.ind + epsA1 # rater A, replicate 1
+y_A2 <- 50 + mu.ind + epsA2 # rater A, replicate 2
+y_B1 <- 40 + mu.ind + epsB1 # rater B, replicate 1
+y_B2 <- 40 + mu.ind + epsB2 # rater B, replicate 2
+
+ex_data <- data.frame(y = c(y_A1, y_A2, y_B1, y_B2),
+                      rater = factor(rep(c("A", "B"), each = 2*n)),
+                      replicate = factor(rep(rep(1:2, each = n), 2)),
+                      subj = factor(rep(1:n, 4)))
 
 tdi <- TDI(ex_data, y, subj, rater, replicate, p = c(0.8, 0.9),
-           method = c("Choudhary P", "Escaramis", "Choudhary NP", "Perez-Jaume and Carrasco"))
+           method = c("Choudhary P", "Escaramis et al.",
+                      "Choudhary NP", "Perez-Jaume and Carrasco"),
+           boot.type = "cluster", R = 1000)
 plot(tdi)
 
 # enhance plot
-par(las = 1, font.lab = 2, font.axis = 2)
-plot(tdi, xlim = c(10, 70), ylim = c(-60, 80), pch = 16, col = "red")
+plot(tdi, xlim = c(20, 70), ylim = c(-20, 30), tdi = TRUE, ub = TRUE,
+     method = c("es", "pe"), ub.pc = "b_cb", loa = TRUE, loa.col = "red",
+     legend = TRUE)
+
+
+# non-normal data
+
+tdi.aml <- TDI(AMLad, mrd, id, met, rep, p = c(0.85, 0.95), boot.type = "cluster",
+               dec.est = 4, R = 1000)
+plot(tdi.aml)
+
+# enhance plot
+plot(tdi.aml, method = c("choudhary p", "pe"), tdi = TRUE, ub = TRUE, legend = TRUE,
+     main = "Bland-Altman plot of the MRD")
+
 
 }
 \references{
 Altman, D. G., & Bland, J. M. (1983). Measurement in medicine: the analysis of method comparison studies. Journal of the Royal Statistical Society Series D: The Statistician, 32(3), 307-317.
+
+   Bland, J. M., & Altman, D. (1986). Statistical methods for assessing agreement between two methods of clinical measurement. The Lancet, 327(8476), 307-310.
+
+   Perez‐Jaume, S., & Carrasco, J. L. (2015). A non‐parametric approach to estimate the total deviation index for non‐normal data. Statistics in Medicine, 34(25), 3318-3335.
 }

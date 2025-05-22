@@ -4,12 +4,12 @@
 \name{TDIagree-package}
 \alias{TDIagree}
 \alias{TDIagree-package}
-\title{Assessment of agreement for quantitative normal and non-normal data using the total deviation index}
+\title{Assessment of Agreement using the Total Deviation Index}
 \description{
 The total deviation index (TDI) is an unscaled statistical measure used to evaluate the deviation between paired quantitative measurements when assessing
 the extent of agreement between different raters. It describes a boundary such that a large specified proportion of the differences in paired measurements
-are within the boundary (Lin, 2000) \url{https://doi.org/10.1002/(SICI)1097-0258(20000130)19:2<255::AID-SIM293>3.0.CO;2-8}. This R package implements some methodologies
-existing in the literature for TDI estimation and inference in the case of two raters.
+are within the boundary (Lin, 2000). This R package implements some methodologies existing in the literature for TDI estimation and inference in the case
+of two raters reviewed in Perez-Jaume and Carrasco (2015).
 }
 \section{Functions}{
 
@@ -21,15 +21,21 @@ existing in the literature for TDI estimation and inference in the case of two r
 \code{\link[TDIagree]{print.tdi}}, \code{\link[TDIagree]{plot.tdi}}
 }
 
+\section{Datasets}{
+
+\code{\link[TDIagree]{AMLad}}
+}
+
 \references{
-Lin, L. I. K. (2000). Total deviation index for measuring individual agreement with applications in laboratory performance and bioequivalence. Statistics in medicine, 19.2:255-270.
+Lin, L. I. K. (2000). Total deviation index for measuring individual agreement with applications in laboratory performance and bioequivalence. Statistics in Medicine, 19(2):255-270.
 }
 \author{
-\strong{Maintainer}: Anna Felip-Badia \email{annafelipibadia@gmail.com}
+\strong{Maintainer}: Anna Felip-Badia \email{annafelipibadia@gmail.com} (\href{https://orcid.org/0009-0002-8751-5228}{ORCID})
 
 Authors:
 \itemize{
-  \item Sara Perez-Jaume
+  \item Sara Perez-Jaume (\href{https://orcid.org/0000-0002-9805-4810}{ORCID})
+  \item Josep L Carrasco (\href{https://orcid.org/0000-0003-1184-0753}{ORCID})
 }
 
 }

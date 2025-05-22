@@ -1,19 +1,24 @@
 Package: TDIagree
 Type: Package
-Title: Assessment of agreement for quantitative normal and non-normal
-        data using the total deviation index
-Version: 0.1.0
-Authors@R: c(person("Anna", "Felip-Badia", email="annafelipibadia@gmail.com", role=c("aut", "cre")),
-             person("Sara", "Perez-Jaume", role="aut"))
+Title: Assessment of Agreement using the Total Deviation Index
+Version: 0.1.1
+Authors@R: c(person("Anna", "Felip-Badia", email="annafelipibadia@gmail.com", role=c("aut", "cre"), comment = c(ORCID = "0009-0002-8751-5228")),
+             person("Sara", "Perez-Jaume", role="aut", comment = c(ORCID = "0000-0002-9805-4810")),
+	     person("Josep L", "Carrasco", role="aut", comment = c(ORCID = "0000-0003-1184-0753")))
 Maintainer: Anna Felip-Badia <annafelipibadia@gmail.com>
-Description: The total deviation index (TDI) is an unscaled statistical measure used to evaluate the deviation between paired quantitative measurements when assessing the extent of agreement between different raters. It describes a boundary such that a large specified proportion of the differences in paired measurements are within the boundary (Lin, 2000) <https://doi.org/10.1002/(SICI)1097-0258(20000130)19:2<255::AID-SIM293>3.0.CO;2-8>.
+Description: The total deviation index (TDI) is an unscaled statistical measure used to evaluate the deviation between paired quantitative measurements when assessing the extent of agreement between different raters. It describes a boundary such that a large specified proportion of the differences in paired measurements are within the boundary (Lin, 2000) <https://pubmed.ncbi.nlm.nih.gov/10641028/>.
     This R package implements some methodologies existing in the literature for TDI estimation and inference in the case of two raters.
 License: GPL (>= 2)
-Depends: R (>= 3.1)
+Depends: R (>= 4.1.0)
 Encoding: UTF-8
+LazyData: true
 RoxygenNote: 7.3.2
-Imports: boot, gt, multcomp, nlme, stats
-NeedsCompilation: no
-Packaged: 2025-03-07 09:11:40 UTC; afelipb
-Author: Anna Felip-Badia [aut, cre],
-  Sara Perez-Jaume [aut]
+Imports: 
+    boot,
+    gt,
+    multcomp,
+    nlme,
+    stats,
+    plotfunctions,
+    coxed,
+    katex

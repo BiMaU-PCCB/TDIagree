@@ -5,134 +5,177 @@
 \title{TDI estimation and inference}
 \usage{
 TDI(data, y, id, met, rep = NA,
-    method = c("Choudhary P", "Escaramis", "Choudhary NP", "Perez-Jaume and Carrasco"),
-    p = 0.9, dec.p = 2, dec.est = 3, tol = 10^(-8),
-    choose.model.ch.p = TRUE, var.equal = TRUE, choose.model.es = TRUE, int = FALSE,
-    alpha = 0.05, type = 8, R = 10000)
+    method = c("Choudhary P", "Escaramis et al.",
+               "Choudhary NP", "Perez-Jaume and Carrasco"),
+    p = 0.9, ub = TRUE, boot.type = c("differences", "cluster"),
+    type = 8, R = 10000, dec.p = 2, dec.est = 3,
+    choose.model.ch.p = TRUE, var.equal = TRUE,
+    choose.model.es = TRUE, int = FALSE, tol = 10^(-8), add.es = NULL,
+    alpha = 0.05)
 }
 \arguments{
-\item{data}{name of the dataset containing at least 3 columns (measurement, subject effect, rater effect).}
+\item{data}{name of the dataset, of class \code{data.frame}, containing at least 3 columns (quantitative measurement, subject effect, rater effect).}
 
-\item{y}{measurement column name.}
+\item{y}{quantitative measurement column name.}
 
-\item{id}{subject effect column name. Must be a factor.}
+\item{id}{subject effect column name. The corresponding column of \code{data} must be a factor.}
 
-\item{met}{rater effect column name. Must be a factor.}
+\item{met}{rater effect column name. The corresponding column of \code{data} must be a factor.}
 
-\item{rep}{replicate effect column name. Must be a factor. When there are no replicates use \code{rep = NA}. \cr
-Default is NA.}
+\item{rep}{replicate effect column name. When there are no replicates the user should use \code{rep = NA}. When there are replicates, the corresponding column of data must be a factor. \cr
+The default value is \code{NA}.}
 
-\item{method}{name of the method(s) to estimate the TDI and UB. Options: \code{"Lin"} (Lin, 2000),
-\code{"Choudhary P"} (Choudhary, 2008), \code{"Escaramis"} (Escaramis \emph{et al.}, 2010),
-\code{"Choudhary NP"} (Choudhary, 2010) and \code{"Perez-Jaume and Carrasco"} (Perez-Jaume and Carrasco, 2015). \cr
-Default is \code{c("Choudhary P", "Escaramis", "Choudhary NP", "Perez-Jaume and Carrasco")}.}
+\item{method}{name of the method(s) to estimate the TDI and UB. The options are:
+\code{"Choudhary P"} (Choudhary, 2007), \code{"Escaramis et al."} (Escaramis \emph{et al.}, 2010),
+\code{"Choudhary NP"} (Choudhary, 2010) and \code{"Perez-Jaume and Carrasco"} (Perez-Jaume and Carrasco, 2015).
+This argument is not case-sensitive and is passed to \code{\link[base]{match.arg}}. \cr
+The default value is \code{c("Choudhary P", "Escaramis et al.", "Choudhary NP", "Perez-Jaume and Carrasco")}, so all approaches are executed by default.}
 
-\item{p}{a value or vector of the probabilities for estimation of the TDI, where \eqn{0<p<1}. Commonly, \eqn{p\geq 0.80}. \cr
-Default is 0.90.}
+\item{p}{a value or vector of the proportion(s) for estimation of the TDI, where \eqn{0<p<1}. Commonly, \eqn{p\geq 0.80}. \cr
+The default value is 0.90.}
+
+\item{ub}{logical asking whether the UBs should be computed. \cr
+The default value is \code{TRUE}.}
+
+\item{boot.type}{name of the bootstrap approach(es) to be used in the method of Perez-Jaume and Carrasco (2015). There are two
+different options when there are replicates: to bootstrap the vector of the within-subject differences (\code{"differences"})
+or to bootstrap at subject level (\code{"cluster"}). This is, not all the differences coming from the same subject
+need to be bootstrapped together in the first one but all the measurements from the same subjects have to be bootstrapped
+together in the second one. This argument is passed to \code{\link[base]{match.arg}} \cr
+The default value is \code{c("differences", "cluster")}, so all approaches are executed by default.}
+
+\item{type}{in the method of Perez-Jaume and Carrasco (2015), a quantile is calculated to obtain the estimation of the TDI. This argument is an integer
+between 1 and 9 selecting one of the nine quantile algorithms (to be passed to \code{\link[stats]{quantile}}).
+We recommend 8 for continuous data and 3 for discrete data. \cr
+The default value is 8.}
+
+\item{R}{in the method of Perez-Jaume and Carrasco (2015), bootstrap is used for the estimation of the UB.
+This argument chooses the number of bootstrap replicates (to be passed to \code{\link[boot]{boot}}). \cr
+The default value is 10000.}
 
 \item{dec.p}{number of decimals to display for \code{p} in the method \code{\link[TDIagree]{print.tdi}}. \cr
-Default is 2.}
+The default value is 2.}
 
-\item{dec.est}{number of decimals to display for the estimates values in the method \code{\link[TDIagree]{print.tdi}}.
-Now implemented to display up to 4 decimals. In future versions, users will be able to choose to display
-more decimal places. \cr
-Default is 3.}
+\item{dec.est}{number of decimals to display for the estimates in the method \code{\link[TDIagree]{print.tdi}}. Up to 4 decimals. \cr
+The default value is 3.}
 
-\item{tol}{tolerance to be used in the method of Escaramis \emph{et al.} (2010). \cr
-Default is 10^(-8).}
-
-\item{choose.model.ch.p}{in the parametric method of Choudhary (2008) two methods can be fit, one with equal residual homoscedasticity
+\item{choose.model.ch.p}{in the parametric method of Choudhary (2007) two methods can be fit, one with equal residual homoscedasticity
 between raters and one with unequal residual homoscedasticity. This argument, if \code{TRUE}, chooses the
 model with the minimum AIC. If \code{FALSE}, the argument \code{var.equal} must be specified. \cr
-Default is \code{TRUE}.}
+The default value is \code{TRUE}.}
 
-\item{var.equal}{logical asking if there is residual homoscedasticity between raters to choose the model in the parametric method of Choudhary (2008).
-Ignored if \code{choose.model.ch.p} is \code{TRUE}. \cr
-Default is \code{TRUE}.}
+\item{var.equal}{logical asking if there is residual homoscedasticity between raters to choose the model in the parametric method of Choudhary (2007).
+If \code{choose.model.ch.p} is set to \code{TRUE}, this argument is ignored. \cr
+The default value is \code{TRUE}.}
 
 \item{choose.model.es}{in the method of Escaramis \emph{et al.} (2010) two methods can be fit, one including the subject--rater interaction
 and one that does not. The model with interaction only applies to data with replicates. This argument, if \code{TRUE}, chooses the
 model with the minimum AIC. If \code{FALSE}, the argument \code{int} must be specified. \cr
-Default is \code{TRUE}.}
+The default value is \code{TRUE}.}
 
 \item{int}{logical asking if there is interaction between subjects and methods to choose the model in the method of Escaramis \emph{et al.} (2010).
-The model with interaction only applies to data with replicates. Ignored if \code{choose.model.es} is \code{TRUE}. \cr
-Default is \code{FALSE}.}
+The model with interaction only applies to data with replicates. If \code{choose.model.es} is set to \code{TRUE}, this argument is ignored. \cr
+The default value is \code{FALSE}.}
 
-\item{alpha}{confidence level for inference on the TDI. \cr
-Default is 0.05.}
+\item{tol}{tolerance to be used in the method of Escaramis \emph{et al.} (2010). \cr
+The default value is 10^(-8).}
 
-\item{type}{in the method of Perez-Jaume and Carrasco (2015), a quantile is calculated to obtain the estimation of the tDI. This argument is an integer
-between 1 and 9 selecting one of the nine quantile algorithms (to be passed to \code{\link[stats]{quantile}}).
-Recommended 8 for continuous data and 3 for discrete data. \cr
-Default is 8.}
+\item{add.es}{name of the columns in \code{data} that will be added to the model (as fixed effects) of the method of Escaramis \emph{et al.} (2010). It must be passed as a column
+name or vector of column names. \cr
+The default value, \code{NULL}, indicates that no extra variables are to be added in the model.}
 
-\item{R}{in the method of Perez-Jaume and Carrasco (2015), bootstrap is used for the estimation of the UB.
-This argument chooses the number of bootstrap replicates (to be passed to \code{\link[boot]{boot}}). \cr
-Default is 10000.}
+\item{alpha}{significance level for inference on the TDI. \cr
+The default value is 0.05.}
 }
 \value{
 An object of class \code{tdi}, which is a list with five components:
 \describe{
-  \item{\code{result}}{an object of class \code{data.frame} with the TDI estimates and UBs of the methods specified for every probability.}
-  \item{\code{fitted.models}}{a list with the fitted models of the parametric methods of Choudhary (2008) and Escaramis \emph{et al.} (2010).}
-  \item{\code{params}}{a list with the values \code{dec.est} and \code{dec.p} to be used in the method \code{\link[TDIagree]{print.tdi}}.}
+  \item{\code{result}}{an object of class \code{data.frame} with the TDI estimates and UBs of the methods specified for every proportion.}
+  \item{\code{fitted.models}}{a list with the fitted models of the parametric methods of Choudhary (2007) and Escaramis \emph{et al.} (2010).}
+  \item{\code{params}}{a list with the values \code{dec.est}, \code{dec.p}, \code{ub}, \code{method} and \code{alpha} to be used in the method \code{\link[TDIagree]{print.tdi}}
+                       and in the method \code{\link[TDIagree]{plot.tdi}}.}
   \item{\code{data.long}}{an object of class \code{data.frame} with columns y, id, met (and rep if it applies) with the values of the measurement, subject identifiers,
                           rater (and replicate number if it applies) from the original data frame provided.}
   \item{\code{data.wide}}{an object of class \code{data.frame} with either:
                           \itemize{
                            \item{columns id, y_met1, y_met2 (in the case of no replicates) with the measurements of each method.}
-                           \item{columns id, y_met1rep1, ..., y_met1rep\eqn{m}, y_met2rep1, ..., y_met2rep\eqn{m}, with the measurements of each method and each replicate, where \eqn{m} is the number of replicates.}}
+                           \item{columns id, y_met1rep1,..., y_met1rep\eqn{m}, y_met2rep1,..., y_met2rep\eqn{m}, with the measurements of each method and each replicate, where \eqn{m} is the number of replicates.}}
                           Numbers 1 and 2 after met correspond to the first and second level of the column met in data, respectively.
-                          Numbers 1, ...,\eqn{m} after rep correspond to the first, ..., \eqn{m}-th level of the column met in data, respectively.}
+                          Numbers 1,..., \eqn{m} after rep correspond to the first,..., \eqn{m}-th level of the column rep in data, respectively.}
 }
 }
 \description{
 This function implements the estimation of the TDI and its corresponding \eqn{100(1-\alpha)\%} upper bound (UB),
-where \eqn{\alpha} is the significance level, using the methods proposed by Choudhary (2008),
+where \eqn{\alpha} is the significance level, using the methods proposed by Choudhary (2007),
 Escaramis \emph{et al.} (2010), Choudhary (2010) and Perez-Jaume and Carrasco (2015) in the case of two raters.
 See \strong{Details} and \strong{References} for further information about these methods.
 }
 \details{
-The methods of Choudhary (2008) and Escaramis \emph{et al.} (2010) are parametric methods based on linear mixed models
+The methods of Choudhary (2007) and Escaramis \emph{et al.} (2010) are parametric methods based on linear mixed models
 that assume normality of the data and linearity between the response and the effects (subjects, raters and
-random errors). The methods of Choudhary (2010) and Perez-Jaume and Carrasco (2015) are non-parametric methods
+random errors). The linear mixed models are fitted using the function \code{\link[nlme]{lme}} from the \code{nlme} package.
+The methods of Choudhary (2010) and Perez-Jaume and Carrasco (2015) are non-parametric methods
 based on the estimation of quantiles of the absolute value of the differences between raters. Non-parametric
 methods are recommended when dealing with skewed data or other non-normally distributed data, such as count data.
 In situations of normality, parametric methods are recommended. See \strong{References} for further details.
 }
 \examples{
+# normal data, parametric methods more suitable
+
 set.seed(2025)
 
 n <- 100
-y_A1 <- rnorm(n, 50, 10) # rater A, replicate 1
-y_A2 <- rnorm(n, 50, 10) # rater A, replicate 2
-y_B1 <- rnorm(n, 30, 15) # rater B, replicate 1
-y_B2 <- rnorm(n, 30, 15) # rater B, replicate 2
 
-ex_data <- data.frame(y = c(y_A1, y_A2, y_B1, y_B2), rater = factor(rep(c("A", "B"), each = 2*n)),
-                      replicate = factor(rep(rep(1:2, each = n), 2)), subj = factor(rep(1:n, 4)))
+mu.ind <- rnorm(n, 0, 7)
+
+epsA1 <- rnorm(n, 0, 3)
+epsA2 <- rnorm(n, 0, 3)
+epsB1 <- rnorm(n, 0, 3)
+epsB2 <- rnorm(n, 0, 3)
+
+y_A1 <- 50 + mu.ind + epsA1 # rater A, replicate 1
+y_A2 <- 50 + mu.ind + epsA2 # rater A, replicate 2
+y_B1 <- 40 + mu.ind + epsB1 # rater B, replicate 1
+y_B2 <- 40 + mu.ind + epsB2 # rater B, replicate 2
+
+ex_data <- data.frame(y = c(y_A1, y_A2, y_B1, y_B2),
+                      rater = factor(rep(c("A", "B"), each = 2*n)),
+                      replicate = factor(rep(rep(1:2, each = n), 2)),
+                      subj = factor(rep(1:n, 4)))
 
 tdi <- TDI(ex_data, y, subj, rater, replicate, p = c(0.8, 0.9),
-           method = c("Choudhary P", "Escaramis", "Choudhary NP", "Perez-Jaume and Carrasco"))
+           method = c("Choudhary P", "Escaramis et al.",
+                      "Choudhary NP", "Perez-Jaume and Carrasco"),
+           boot.type = "cluster", R = 1000)
+
 tdi$result
 tdi$fitted.models
 tdi$data.long
 tdi$data.wide
 
+
+# non-normal data, non-parametric methods more suitable
+
+tdi.aml <- TDI(AMLad, mrd, id, met, rep, p = c(0.85, 0.95), boot.type = "cluster",
+               dec.est = 4, R = 1000)
+tdi.aml$result
+tdi.aml$fitted.models
+tdi.aml$data.long
+tdi.aml$data.wide
+
 }
 \references{
-Efron, B., & Tibshirani, R. (1993). An Introduction to the Bootstrap; Chapman and 913 Hall. Inc.: New York, NY, USA, 914.
+Efron, B., & Tibshirani, R. (1993). An Introduction to the Bootstrap; Chapman and Hall. Inc.: New York, NY, USA, 914.
 
-   Lin, L. I. K. (2000). Total deviation index for measuring individual agreement with applications in laboratory performance and bioequivalence. Statistics in medicine, 19.2:255-270.
+   Lin, L. I. K. (2000). Total deviation index for measuring individual agreement with applications in laboratory performance and bioequivalence. Statistics in Medicine, 19(2):255-270.
 
-   Choudhary, P. K. (2008). A tolerance interval approach for assessment of agreement in method comparison studies with repeated measurements. Journal of Statistical Planning and inference, 138(4), 1102-1115.
+   Choudhary, P. K. (2007). A tolerance interval approach for assessment of agreement with left censored data. Journal of Biopharmaceutical Statistics, 17(4), 583-594.
 
-   Escaramís, G., Ascaso, C., & Carrasco, J. L. (2010). The total deviation index estimated by tolerance intervals to evaluate the concordance of measurement devices. BMC Medical Research Methodology, 10, 1-12.
+   Escaramis, G., Ascaso, C., & Carrasco, J. L. (2010). The total deviation index estimated by tolerance intervals to evaluate the concordance of measurement devices. BMC Medical Research Methodology, 10, 1-12.
 
    Choudhary, P. K. (2010). A unified approach for nonparametric evaluation of agreement in method comparison studies. The International Journal of Biostatistics, 6(1).
 
-   Perez‐Jaume, S., & Carrasco, J. L. (2015). A non‐parametric approach to estimate the total deviation index for non‐normal data. Statistics in medicine, 34(25), 3318-3335.
+   Perez‐Jaume, S., & Carrasco, J. L. (2015). A non‐parametric approach to estimate the total deviation index for non‐normal data. Statistics in Medicine, 34(25), 3318-3335.
 }
 \seealso{
 \code{\link[TDIagree]{print.tdi}}, \code{\link[TDIagree]{plot.tdi}}
