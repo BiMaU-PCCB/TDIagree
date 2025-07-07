@@ -1,7 +1,7 @@
 Package: TDIagree
 Type: Package
 Title: Assessment of Agreement using the Total Deviation Index
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(person("Anna", "Felip-Badia", email="annafelipibadia@gmail.com", role=c("aut", "cre"), comment = c(ORCID = "0009-0002-8751-5228")),
              person("Sara", "Perez-Jaume", role="aut", comment = c(ORCID = "0000-0002-9805-4810")),
 	     person("Josep L", "Carrasco", role="aut", comment = c(ORCID = "0000-0003-1184-0753")))
@@ -13,12 +13,9 @@ Depends: R (>= 4.1.0)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
-Imports: 
-    boot,
-    gt,
-    multcomp,
-    nlme,
-    stats,
-    plotfunctions,
-    coxed,
-    katex
+Imports: boot, gt, multcomp, nlme, stats, plotfunctions, katex
+NeedsCompilation: no
+Packaged: 2025-06-17 12:58:13 UTC; afelipb
+Author: Anna Felip-Badia [aut, cre] (<https://orcid.org/0009-0002-8751-5228>),
+  Sara Perez-Jaume [aut] (<https://orcid.org/0000-0002-9805-4810>),
+  Josep L Carrasco [aut] (<https://orcid.org/0000-0003-1184-0753>)

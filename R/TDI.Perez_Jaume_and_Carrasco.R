@@ -19,12 +19,11 @@
 #'
 #' @importFrom stats quantile qnorm sd
 #' @importFrom boot boot
-#' @importFrom coxed bca
 #'
 #' @noRd
 
 
-# auxiliar function for TDI.Perez_Jaume_and_Carrasco
+# auxiliar functions for TDI.Perez_Jaume_and_Carrasco
 
 d_boot <- function(dataset, i, p, type){
   return(quantile(dataset[i], p, type = type))
@@ -47,6 +46,26 @@ c_boot <- function(dataset, i, p, type){
 
   return(quantile(abs(d), p, type = type))
 }
+
+# function from version 0.3.3 of the coxed package by the authors Jonathan Kropko and Jeffrey J. Harden
+bca <- function(theta, conf.level = .95){
+  low <- (1 - conf.level)/2
+  high <- 1 - low
+  sims <- length(theta)
+  z.inv <- length(theta[theta < mean(theta)])/sims
+  z <- qnorm(z.inv)
+  U <- (sims - 1) * (mean(theta, na.rm=TRUE) - theta)
+  top <- sum(U^3)
+  under <- 6 * (sum(U^2))^{3/2}
+  a <- top / under
+  lower.inv <-  pnorm(z + (z + qnorm(low))/(1 - a * (z + qnorm(low))))
+  lower <- quantile(theta, lower.inv, names=FALSE)
+  upper.inv <-  pnorm(z + (z + qnorm(high))/(1 - a * (z + qnorm(high))))
+  upper <- quantile(theta, upper.inv, names=FALSE)
+  return(c(lower, upper))
+}
+
+
 
 TDI.Perez_Jaume_and_Carrasco <- function(data.wide, p, ub = TRUE, boot.type = c("Differences", "Cluster"),
                                          alpha = 0.05, type = 8, R = 10000){
